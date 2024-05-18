@@ -14,21 +14,25 @@ const Header = () => {
         return store.user
     })
     useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
+      const unsubscribe=onAuthStateChanged(auth, (user) => {
           if (user) {
             const {uid,email,displayName,photoURL} = user
-            dispatch(addUser({uid:uid,email:email,displayName:displayName,photo_URL:photoURL}))
+            dispatch(addUser({uid:uid,email:email,displayName:displayName,photoURL:photoURL}))
             navigate("/browse");
           
           } else {
             dispatch(removeUser())
+            navigate('/')
           }
         });
+               //Unsubscribe the when the unmount
+        return ()=>unsubscribe()
       }, [])
     const handleClick = () => {
         signOut(auth).then(() => {
-            navigate('/')
+        
         }).catch((error) => {
+            console.log(error)
             navigate('/error')
         });
     }
